@@ -1,28 +1,27 @@
-# CodeGenX 🚀
+# CodeGenX
 
-**Code Generation using Open Models**—powered AI to help you write code faster in VS Code.
+A lightweight AI CLI code‑generation tool. It reads your project files and responds to natural-language prompts by creating or editing code.
 
-![Demo Screenshot](assets/CodeGenX_demo.gif)
+## Features
 
-## 🔧 Features
+- Uses open-source models through an MCP server to understand repository context
+- Handles file operations (create, modify, delete) based on AI-generated plans
+- Includes utilities for JSON validation and folder management
 
-- Generates Python code based on context and comments  
-- Uses OpenRouter as a backbone, fine-tuned on open-source Python code :contentReference[oaicite:1]{index=1}
-- Seamless File Operations
+## Getting Started
 
-## 🎯 Why CodeGenX?
-
-- **Speed up development**: Generate boilerplate, utility functions, or entire modules.  
-- **Leverage AI confidently**: Purpose-built for Python data science & web development.  
-- **Open‑source freedom**: Customize prompts, fine-tune models, or self-host for full control.
-- **Access Open Models**: Only uses Open Source models.
-
-## 📦 Installation
-
-```bash
+1. Clone the repo:
+   ```bash
 git clone https://github.com/imnick48/CodeGenX
 cd CodeGenX
-npm build index.js
-```
-run the build file then
+``` 
+2. Install dependencies:
+   ```bash
+npm install
+``` 
+3. Run the main script or integrate it into your editor of choice.
+
+## Development
+
+Source lives under `/src`. Core logic is in `codegenTool.js`; helper functions are in `utills.js`. Feel free to extend and customize prompts.
 

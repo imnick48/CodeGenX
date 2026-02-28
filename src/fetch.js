@@ -1,68 +1,56 @@
 import OpenAI from 'openai';
-import { InputSection } from './InpSection.js';
-import { initDatabase, createTable, insertData, getById } from './db.js';
-import fs from 'fs';
-import { SysPrompt } from './SysPrompt.js';
+import { buildSysPrompt } from './SysPrompt.js';
 
-let API_KEY = '';
-let db;
+let _client = null;
 
-async function initializeAPIKey() {
-  const dbPath = './.CodeGRX/ProjectGX.sqlite';
-  if (!fs.existsSync('.CodeGRX')) {
-    fs.mkdirSync('.CodeGRX', { recursive: true });
-  }
-  db = await initDatabase(dbPath);
-  await createTable(db, 'APIKEY', `
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        Keys TEXT NOT NULL UNIQUE
-  `);
-  const existingKey = await getById(db, 'APIKEY', 1);
-  if (existingKey) {
-    API_KEY = existingKey.Keys;
-  } else {
-    API_KEY = await InputSection("Enter your OpenRouter API Key: ");
-    await insertData(db, 'APIKEY', {
-      Keys: API_KEY
-    });
+
+function getOpenAIClient() {
+  if (_client) return _client;
+
+  const apiKey = process.env.OPENROUTER_API_KEY;
+  if (!apiKey) {
+    throw new Error(
+      'OPENROUTER_API_KEY is not set. ' +
+      'The CLI client should have resolved the key before starting the server.',
+    );
   }
 
-  return API_KEY;
-}
-const apiKey = await initializeAPIKey();
+  _client = new OpenAI({
+    baseURL: 'https://openrouter.ai/api/v1',
+    apiKey,
+    defaultHeaders: {
+      'HTTP-Referer': 'https://sagnickportfolio48.vercel.app/',
+      'X-Title': 'CodeGenX',
+    },
+  });
 
-const openai = new OpenAI({
-  baseURL: 'https://openrouter.ai/api/v1',
-  apiKey: apiKey,
-  defaultHeaders: {
-    'X-Title': 'CodeGRX Dev',
-    'HTTP-Referer': 'https://sagnickportfolio48.vercel.app/',
-    'X-Title': 'CodeGRX'
-  },
-});
-
-async function AICon(prompt) {
-  try {
-    const completion = await openai.chat.completions.create({
-      model: 'mistralai/mistral-7b-instruct:free',
-      temperature: 0.2, 
-      response_format: { type: "json_object" }, 
-      messages: [
-        {
-          role: 'system',
-          content: SysPrompt
-        },
-        {
-          role: 'user',
-          content: prompt,
-        },
-      ],
-    });
-    return completion.choices[0].message.content;
-  } catch (error) {
-    console.error('API Error:', error);
-    throw new Error(`AI request failed: ${error.message}`);
-  }
+  return _client;
 }
 
-export { AICon };
+async function AICon(userPrompt) {
+  const client = await getOpenAIClient();
+
+  const model = process.env.OPENROUTER_API_MODEL;
+  if (!model) {
+    throw new Error(
+      'OPENROUTER_API_MODEL is not set. ' +
+      'The CLI client should have resolved the model before starting the server.',
+    );
+  }
+
+  const completion = await client.chat.completions.create({
+    model,
+    temperature: 0.2,
+    response_format: { type: 'json_object' },
+    messages: [
+      { role: 'system', content: buildSysPrompt() },
+      { role: 'user', content: userPrompt },
+    ],
+  });
+
+  const content = completion.choices[0]?.message?.content;
+  if (!content) throw new Error('Empty response from AI');
+  return content;
+}
+
+export { AICon, getOpenAIClient };

@@ -1,20 +1,26 @@
 {
   "name": "codegrx",
-  "version": "1.0.0",
-  "description": "CODEGRX",
-  "main": "index.js",
+  "version": "2.0.0",
+  "description": "CodeGenX — AI Code Generator with MCP Architecture",
+  "main": "src/client.js",
+  "bin": {
+    "codegenx": "./bin/codegenx.js"
+  },
   "type": "module",
   "scripts": {
+    "start": "node src/client.js",
+    "server": "node src/server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Sagnick",
   "license": "ISC",
   "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.11.0",
     "better-sqlite3": "^11.10.0",
     "chalk": "^5.4.1",
     "dotenv": "^16.5.0",
     "figlet": "^1.8.1",
     "openai": "^5.2.0",
-    "sqlite": "^5.1.1"
+    "zod": "^3.24.2"
   }
 }
