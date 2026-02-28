@@ -11,12 +11,12 @@ A lightweight AI CLI code‑generation tool. It reads your project files and res
 ## Getting Started
 
 1. Clone the repo:
-   ```bash
+```bash
 git clone https://github.com/imnick48/CodeGenX
 cd CodeGenX
-``` 
+```
 2. Install dependencies:
-   ```bash
+```bash
 npm install
 ``` 
 3. Run the main script or integrate it into your editor of choice.
