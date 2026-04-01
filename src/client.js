@@ -23,8 +23,8 @@ console.log(chalk.dim('  AI Code Generator  ·  MCP Architecture  ·  v2.0.0\n')
 const DB_DIR = './.CodeGenX';
 const DB_PATH = `${DB_DIR}/ProjectGX.sqlite`;
 
-let apiKey = process.env.OPENROUTER_API_KEY || '';
-let apiModel = process.env.OPENROUTER_API_MODEL || '';
+let apiKey = process.env.GROQ_API_KEY || '';
+let apiModel = process.env.GROQ_MODEL || '';
 
 if (!apiKey || !apiModel) {
     const isNewProject = !fs.existsSync(DB_PATH);
@@ -49,7 +49,7 @@ if (!apiKey || !apiModel) {
             apiKey = existingKey.value;
             console.log(chalk.green('  ✓ API Key loaded from project database'));
         } else {
-            apiKey = (await InputSection(chalk.yellow('  Enter your OpenRouter API Key'))).trim();
+            apiKey = (await InputSection(chalk.yellow('  Enter your Groq API Key'))).trim();
             db.prepare(`INSERT INTO CONFIG (key, value) VALUES (?, ?)`).run('api_key', apiKey);
             console.log(chalk.green('  ✓ API Key saved to project database'));
         }
@@ -62,7 +62,7 @@ if (!apiKey || !apiModel) {
             apiModel = existingModel.value;
             console.log(chalk.green('  ✓ Model loaded from project database'));
         } else {
-            apiModel = (await InputSection(chalk.yellow('  Enter your OpenRouter Model (e.g. mistralai/mistral-7b-instruct:free)'))).trim();
+            apiModel = (await InputSection(chalk.yellow('  Enter your Groq Model (e.g. llama-3.3-70b-versatile)'))).trim();
             db.prepare(`INSERT INTO CONFIG (key, value) VALUES (?, ?)`).run('api_model', apiModel);
             console.log(chalk.green('  ✓ Model saved to project database'));
         }
@@ -79,7 +79,7 @@ const serverPath = path.join(__dirname, 'server.js');
 const transport = new StdioClientTransport({
     command: 'node',
     args: [serverPath],
-    env: { ...process.env, OPENROUTER_API_KEY: apiKey, OPENROUTER_API_MODEL: apiModel },
+    env: { ...process.env, GROQ_API_KEY: apiKey, GROQ_MODEL: apiModel },
 });
 
 const client = new Client(

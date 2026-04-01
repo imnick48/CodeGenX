@@ -4,36 +4,32 @@ import { buildSysPrompt } from './SysPrompt.js';
 let _client = null;
 
 
-function getOpenAIClient() {
+function getGroqClient() {
   if (_client) return _client;
 
-  const apiKey = process.env.OPENROUTER_API_KEY;
+  const apiKey = process.env.GROQ_API_KEY;
   if (!apiKey) {
     throw new Error(
-      'OPENROUTER_API_KEY is not set. ' +
+      'GROQ_API_KEY is not set. ' +
       'The CLI client should have resolved the key before starting the server.',
     );
   }
 
   _client = new OpenAI({
-    baseURL: 'https://openrouter.ai/api/v1',
+    baseURL: 'https://api.groq.com/openai/v1',
     apiKey,
-    defaultHeaders: {
-      'HTTP-Referer': 'https://sagnickportfolio48.vercel.app/',
-      'X-Title': 'CodeGenX',
-    },
   });
 
   return _client;
 }
 
 async function AICon(userPrompt) {
-  const client = await getOpenAIClient();
+  const client = await getGroqClient();
 
-  const model = process.env.OPENROUTER_API_MODEL;
+  const model = process.env.GROQ_MODEL;
   if (!model) {
     throw new Error(
-      'OPENROUTER_API_MODEL is not set. ' +
+      'GROQ_MODEL is not set. ' +
       'The CLI client should have resolved the model before starting the server.',
     );
   }
@@ -53,4 +49,4 @@ async function AICon(userPrompt) {
   return content;
 }
 
-export { AICon, getOpenAIClient };
+export { AICon, getGroqClient };
